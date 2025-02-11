@@ -14,7 +14,7 @@ services:
             - ./:/var/www/api
         environment:
             - DB_HOST=db_conectala
-            - DB_PORT=3306
+            - DB_PORT=3310
         depends_on:
             - db_conectala
         networks:
@@ -46,9 +46,9 @@ services:
             MYSQL_ROOT_PASSWORD: '123Mudar!'
             TZ: 'America/Sao_Paulo'
         ports:
-            - '3306:3306'
+            - '3310:3306'
         volumes:
-            - dbvol:/var/lib/mysql/data
+            - dbvol:/var/lib/mysql
             - ./initdb.d:/docker-entrypoint-initdb.d
         networks:
             - api_net
