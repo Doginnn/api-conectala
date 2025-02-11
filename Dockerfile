@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
     locales \
     libicu-dev \
     g++ \
+    && docker-php-ext-install -j$(nproc) gd mbstring pdo pdo_mysql zip bcmath intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd mbstring pdo pdo_pgsql zip bcmath intl \
     && pecl install redis timezonedb \
     && echo "extension=timezonedb.so" > /usr/local/etc/php/conf.d/docker-php-ext-timezonedb.ini \
     && echo "extension=redis.so" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini
