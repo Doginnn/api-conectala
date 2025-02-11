@@ -1,0 +1,55 @@
+networks:
+    api_net:
+
+volumes:
+    dbvol:
+
+services:
+    api-conectala:
+        container_name: api-conectala
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        volumes:
+            - ./:/var/www/api
+        environment:
+            - DB_HOST=db_conectala
+            - DB_PORT=3306
+        depends_on:
+            - db_conectala
+        networks:
+            - api_net
+        restart: always
+
+    nginx_conectala:
+        container_name: nginx_conectala
+        image: nginx:alpine
+        volumes:
+            - ./docker/nginx:/etc/nginx/conf.d
+            - ./:/var/www/api
+        ports:
+            - '8085:80'
+            - '8445:443'
+        networks:
+            - api_net
+        depends_on:
+            - api-conectala
+        restart: always
+
+    db_conectala:
+        container_name: db_conectala
+        image: mysql:8.0
+        environment:
+            MYSQL_DATABASE: 'conectala'
+            MYSQL_USER: 'conectala'
+            MYSQL_PASSWORD: '123Mudar!'
+            MYSQL_ROOT_PASSWORD: '123Mudar!'
+            TZ: 'America/Sao_Paulo'
+        ports:
+            - '3306:3306'
+        volumes:
+            - dbvol:/var/lib/mysql/data
+            - ./initdb.d:/docker-entrypoint-initdb.d
+        networks:
+            - api_net
+        restart: always
