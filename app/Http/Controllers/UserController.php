@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
@@ -16,6 +17,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No users here, son, sorry!'],Response::HTTP_NOT_FOUND);
+        }
 
         return response()->json($users);
     }
@@ -38,11 +42,14 @@ class UserController extends Controller
 
             $user = User::create($validatedData);
 
-            return response()->json($user, 201);
+            return response()->json($user, Response::HTTP_CREATED);
         } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+            return response()->json(['errors' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error to create user, please try again!'], 500);
+            return response()->json(
+                ['message' => 'Error to create user, please try again!'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -53,7 +60,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user) {
-            return response()->json(['message' => 'User not found.'],404);
+            return response()->json(['message' => 'User not found.'],Response::HTTP_NOT_FOUND);
         }
 
         return response()->json($user);
@@ -67,7 +74,7 @@ class UserController extends Controller
         try {
             $user = User::find($id);
             if (!$user) {
-                return response()->json(['message' => 'User not found.'], 404);
+                return response()->json(['message' => 'User not found.'], Response::HTTP_NOT_FOUND);
             }
 
             $validatedData = $request->validate([
@@ -84,9 +91,12 @@ class UserController extends Controller
 
             return response()->json($user);
         } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+            return response()->json(['errors' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error to update user, please try again!'], 500);
+            return response()->json(
+                ['message' => 'Error to update user, please try again!'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -98,14 +108,17 @@ class UserController extends Controller
         try {
             $user = User::find($id);
             if (!$user) {
-                return response()->json(['message' => 'User not found.'],404);
+                return response()->json(['message' => 'User not found.'],Response::HTTP_NOT_FOUND);
             }
 
             $user->delete($user);
 
-            return response()->json(['message' => 'User deleted successfully!'], 201);
+            return response()->json(['message' => 'User deleted successfully!'], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error to delete user, please try again!'], 500);
+            return response()->json(
+                ['message' => 'Error to delete user, please try again!'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 }
