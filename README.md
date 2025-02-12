@@ -1,66 +1,247 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Sobre a API-CONECTALA
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Essa é uma APIRestful, feita em **PHP 8, Laravel 11 e Docker**
 
-## About Laravel
+## Pré-requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Composer
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Composer é um gerenciador de dependências do PHP.
+É necessário para o Laravel funcionar.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Instruções para instalação: https://getcomposer.org/download/.
 
-## Learning Laravel
+No momento da edição deste arquivo:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    php composer-setup.php
+    php -r "unlink('composer-setup.php');"
+    sudo mv composer.phar /usr/local/bin/composer
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Obviamente o hash acima vai mudar com novas versões do Composer.
+Assim, **prefira usar as instruções do link acima**.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Git
 
-## Laravel Sponsors
+Instruções para instalação:
+https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Gerando chaves privada e pública do GitHub
 
-### Premium Partners
+No terminal:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+    ssh-keygen -t rsa
+```
 
-## Contributing
+Local padrão onde a chave é gerada (o comando aguarda _input_, pode ser `<ENTER>`):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+    /root/.ssh/id_rsa
+```
 
-## Code of Conduct
+Novamente o comando aguarda _input_ de senha. Pode deixar em branco, portanto `<ENTER>` novamente.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Junto com esse arquivo (chave privada), é gerada a **chave pública** (`.pub`). Ela precisa ser exibida para o usuário:
 
-## Security Vulnerabilities
+```bash
+    sudo cat /root/.ssh/id_rsa.pub
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+O usuário então deve **copiar toda a chave**, no formato iniciado abaixo:
 
-## License
+```bash
+    ssh-rsa AAAAB3NzaC...
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+O usuário deve:
+
+1. Acessar https://github.com/settings/keys.
+2. Usar o botão "New SSH key".
+3. Dê um nome para a chave. Ex.: **KEY_API_TEST**
+4. Colar todo o conteúdo da chave pública.
+5. Clicar em "Add SSH key" novamente.
+6. Confirmar com senha do GitHub.
+
+Então, o script pode testar a conexão:
+
+```bash
+    ssh -T git@github.com
+```
+
+Comando aguarda _input_: `yes<ENTER>`
+
+Se o output for `Hi <USERNAME>!...` é sinal que deu tudo certo!
+
+## Clonando o projeto
+
+1. Crie um novo diretório na raiz do sistema, para o novo projeto;
+```bash 
+    sudo mkdir /projetos
+```
+2. Navegue até o diretório onde fará o clone e clone o projeto;
+```bash 
+    cd /projetos
+```
+```bash 
+    git clone git@github.com:Doginnn/api-conectala.git
+```
+3. Dentro do diretório e faça uma cópia do arquivo `.env.example` e renomeie-o para `.env`:
+```bash 
+    sudo cp .env.example .env
+```
+## Subindo o ambiente com Docker
+
+No terminal, acesse a pasta onde o repositório foi clonado, por exemplo:
+
+```bash
+    cd /projetos/api-conectala
+```
+
+Dentro da pasta, execute:
+
+```bash
+    sudo docker compose up -d
+```
+
+## Migrando o banco de dados
+
+Para migrar o banco de dados, o container `api-conectala` deve estar `up`. Agora é só rodar o comando abaixo.
+```shell
+    docker exec -it api-conectala php artisan migrate
+```
+
+**Obs.:** O banco de dados ficará somente com as tabelas e sem conteúdo.
+
+Caso queira migrar e popular o Database com registros **FAKE** ([seeders](https://laravel.com/docs/10.x/eloquent-factories)), execute o comando abaixo:
+
+**Atenção:** Esse comando irá **APAGAR** o Database criado anteriormente e popular com novos dados Fake. Se você salvou algo anteriormente no Database, **TUDO SERÁ PERDIDO**.
+
+```shell
+    docker exec -it api-conectala php artisan migrate:fresh --seed
+```
+
+# Endpoints da API
+Dependendo das configurações no Docker, você poderá testar nos ambientes abaixo:
+
+```text
+    API via POSTMAN/INSOMNIA - http://127.0.0.1:8085/api
+```
+
+```text
+    WEB via BROWSER DE SUA PREFERÊNCIA - http://127.0.0.1:8085
+```
+A API possui os seguintes endpoints:
+1. Listar Todos os Usuários
+- Método: **GET**
+- URL: `/api`
+- Descrição: Retorna uma lista de todos os usuários cadastrados.
+- Exemplo de Resposta:
+```json
+[
+    {
+        "id": 1,
+        "name": "root",
+        "email": "root@gmail.com",
+        "email_verified_at": "2025-02-12T11:54:55.000000Z",
+        "created_at": "2025-02-12T11:54:55.000000Z",
+        "updated_at": "2025-02-12T11:54:55.000000Z"
+    },
+    {
+        "id": 2,
+        "name": "admin",
+        "email": "admin@gmail.com",
+        "email_verified_at": "2025-02-12T11:54:55.000000Z",
+        "created_at": "2025-02-12T11:54:55.000000Z",
+        "updated_at": "2025-02-12T11:54:55.000000Z"
+    },
+    {
+        "id": 3,
+        "name": "suporte",
+        "email": "suporte@gmail.com",
+        "email_verified_at": "2025-02-12T11:54:55.000000Z",
+        "created_at": "2025-02-12T11:54:56.000000Z",
+        "updated_at": "2025-02-12T11:54:56.000000Z"
+    }
+]
+```
+2. Mostra detalhes de um Usuário
+- Método: **GET**
+- URL: `/api/users/{id}`
+- Descrição: Retorna os detalhes de um usuário específico.
+- Exemplo de Resposta:
+```json
+{
+    "id": 1,
+    "name": "root",
+    "email": "root@gmail.com",
+    "email_verified_at": "2025-02-12T11:54:55.000000Z",
+    "created_at": "2025-02-12T11:54:55.000000Z",
+    "updated_at": "2025-02-12T11:54:55.000000Z"
+}
+```
+3. Criar um novo Usuário
+- Método: **POST**
+- URL: `/api/users`
+- Descrição: Cria um novo usuário específico.
+- Exemplo de Requisição(JSON):
+```json
+{
+    "name": "Diógenes Dantas",
+    "email": "diogenes4@gmail.com",
+    "password": "QualquerSenha@123"
+}
+```
+- Exemplo de Resposta:
+```json
+{
+    "name": "Diógenes Dantas",
+    "email": "diogenes4@gmail.com",
+    "email_verified_at": "2025-02-12T12:36:22.000000Z",
+    "updated_at": "2025-02-12T12:36:22.000000Z",
+    "created_at": "2025-02-12T12:36:22.000000Z",
+    "id": 4
+}
+```
+4. Atualizar um usuário específico.
+- Método: **PUT**
+- URL: `/api/users/{id}`
+- Descrição: Atualiza um novo usuário específico.
+- Exemplo de Requisição(JSON):
+```json
+{
+    "name": "Diógenes Dantas Modificado",
+    "email": "diogenes4@gmail.com",
+    "password": "Mudar!123"
+}
+```
+- Exemplo de Resposta:
+```json
+{
+    "id": 4,
+    "name": "Diógenes Dantas Modificado",
+    "email": "diogenes4@gmail.com",
+    "email_verified_at": "2025-02-12T12:36:22.000000Z",
+    "created_at": "2025-02-12T12:36:22.000000Z",
+    "updated_at": "2025-02-12T12:40:56.000000Z"
+}
+```
+5. Deletar um usuário específico.
+- Método: **DELETE**
+- URL: `/api/users/{id}`
+- Descrição: Deleta um usuário específico.
+- Exemplo de Requisição(JSON):
+- Exemplo de Resposta:
+```json
+{
+    "message": "User deleted successfully!"
+}
+```
+## Contato
+- Email: diogenesemmanuel@gmail.com
+- Telefone: (83) 999 712 101
+- Linkedin: https://linkedin.com/in/doginnn
+- Feito com ❤️ por Diógenes Dantas 🚀
