@@ -62,13 +62,9 @@ RUN ln -s /var/www/api/storage/logs /var/log/laravel
 # Cleanup
 RUN rm -Rf /var/cache/apt/archives/*
 
-# Expose PHP-FPM door
-EXPOSE 85
-EXPOSE 445
-EXPOSE 9000
-
 # Volume to persist the aplication code
 VOLUME ["/var/www/api"]
 
 # PHP-FPM comand initialization
+RUN echo "listen = 9000" >> /usr/local/etc/php-fpm.d/zz-docker.conf
 CMD ["php-fpm"]
